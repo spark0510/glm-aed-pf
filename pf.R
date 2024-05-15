@@ -44,7 +44,7 @@ met_inflow_ensembles <- generate_inputs(config)
 initialize_states(config)
 
 
-dir.create(file.path(working_directory, "test"), showWarnings = FALSE)
+dir.create(file.path(working_directory, "ensemble_output"), showWarnings = FALSE)
 bench::bench_time(
   furrr::future_walk(1:config$nmembers,
                      .f = function(m, met_inflow_ensembles, config)
@@ -63,8 +63,10 @@ unlink(list.files(working_directory, pattern = "aed2-", full.names = TRUE))
 unlink(list.files(working_directory, pattern = "aed_phyto_pars-", full.names = TRUE))
 
 dir.create("output",showWarnings = FALSE)
-arrow::open_dataset("test/") |> arrow::write_dataset("output")
-unlink("test", recursive = TRUE)
+arrow::open_dataset("ensemble_output/") |> arrow::write_dataset("output")
+unlink("ensemble_output", recursive = TRUE)
+
+## Post processing of 
 
 obs <- read_csv(config$historical_insitu, show_col_types = FALSE) |>
   mutate(datetime = as_date(datetime)) |>
@@ -84,7 +86,6 @@ prior <- arrow::open_dataset("output/") |>
   mutate(prediction = ifelse(variable == "DO_mgL_mean", prediction/1000*(32),prediction),
          prediction = ifelse(variable == "ch4flux_umolm2s_mean", (prediction * 1000) / (60 * 60 * 24),prediction),
          prediction = ifelse(variable == "co2flux_umolm2s_mean", (prediction * 1000) / (60 * 60 * 24),prediction)) |>
-  #mutate(datetime = as_date(datetime)) |>
   collect() |>
   pivot_wider(names_from = variable, values_from = prediction) |>
   mutate(fDOM_QSU_mean = (OGM_doc + OGM_docr + 151.3407) / 29.62654)  |>
@@ -107,7 +108,6 @@ weights <- prior |>
   summarize(sum_logLL = sum(logLL)/10, count = n(), .by = "ensemble") |>
   mutate(relative_weight = exp(sum_logLL) / sum(exp(sum_logLL))) |>
   arrange(ensemble)
-
 
 nsamples <- 100
 samples <- sample(1:nrow(weights), size = nsamples, replace = TRUE, prob = weights$relative_weight)
