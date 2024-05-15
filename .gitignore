@@ -47,3 +47,15 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+met_*
+aed_phyto_pars-*
+glm3-*
+aed2-*
+*.nc
+states_prior.json
+outflow*
+inflow*
+output/
+pars_prior.json
+
