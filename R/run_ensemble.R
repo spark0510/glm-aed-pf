@@ -74,7 +74,6 @@ run_ensemble <- function(m, met_inflow_ensembles, config){
            prediction = 1.7/prediction) |>
     select(-DateTime)
   
-  
   if(config$include_fluxes){
     
     co2_df <- glmtools::get_var(file = file.path(working_directory, paste0("output-",m,".nc")),
