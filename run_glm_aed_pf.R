@@ -15,13 +15,15 @@ future::plan("future::multisession", workers = 10)
 
 config <- list()
 config$nmembers <- 100
-config$focal_vars <- c("temp","PHY_tchla", "OXY_oxy", "OGM_doc", "OGM_docr")
+config$focal_vars <- c("temp","PHY_tchla", "OXY_oxy", "OGM_doc", "OGM_docr", 
+                       "PHY_cyano","PHY_green", "PHY_diatom",
+                       "NIT_amm", "NIT_nit", "PHS_frp")
 config$focal_depths <- c(0.1, 1.6, 5, 9)
 config$forecast_start_datetime = as_datetime("2021-07-01")
-config$look_back = 20
-config$horizon = 30
-config$start_datetime = config$forecast_start_datetime - days(config$look_back)
-config$end_datetime = config$forecast_start_datetime + days(config$horizon)
+config$look_back <- 20
+config$horizon <- 30
+config$start_datetime <- config$forecast_start_datetime - days(config$look_back)
+config$end_datetime <- config$forecast_start_datetime + days(config$horizon)
 config$site_id <- "fcre"
 config$met_bucket <- "bio230121-bucket01/flare/drivers/met/gefs-v12"
 config$met_endpoint <- "renc.osn.xsede.org"
@@ -30,6 +32,7 @@ config$historical_met <- NULL
 config$historical_insitu <- "https://renc.osn.xsede.org/bio230121-bucket01/vera4cast/targets/project_id=vera4cast/duration=P1D/daily-insitu-targets.csv.gz"
 config$glm_output_time_step <- 12
 config$nsamples <- 100
+config$include_fluxes <- FALSE
 config$obs_names <- c("Temp_C_mean", "Chla_ugL_mean", "DO_mgL_mean", "Secchi_m_sample", "fDOM_QSU_mean")
 config$obs_sd <- c(0.5, 2, 2.5, 1.0, 1000)
 
@@ -126,10 +129,29 @@ obs_df <- posterior |>
   select(variable, observation, depth_m, datetime) |>
   distinct() |>
   filter(depth_m == 1.6 | is.na(depth_m),
-         !is.na(observation))
+         !is.na(observation),
+         str_detect(variable, "PHY_", negate = TRUE))
 
 bind_rows(posterior, prior) |>
-  filter(depth_m == 1.6 | is.na(depth_m)) |>
+  filter(depth_m == 1.6 | is.na(depth_m),
+         str_detect(variable, "PHY_", negate = TRUE)) |>
+  mutate(ensemble = paste0(ensemble,type)) |>
+  ggplot(aes(x = datetime)) +
+  geom_line(aes(y = prediction, group = ensemble)) +
+  geom_point(data = obs_df, aes(x = datetime, y = observation), color = "red", alpha = 0.5) +
+  geom_vline(aes(xintercept = as_date(config$forecast_start_datetime))) +
+  facet_grid(variable~type, scales = "free_y")
+
+obs_df <- posterior |>
+  select(variable, observation, depth_m, datetime) |>
+  distinct() |>
+  filter(depth_m == 1.6 | is.na(depth_m),
+         !is.na(observation),
+         (str_detect(variable, "PHY_") | variable == "Chla_ugL_mean"))
+
+bind_rows(posterior, prior) |>
+  filter(depth_m == 1.6 | is.na(depth_m),
+         (str_detect(variable, "PHY_") | variable == "Chla_ugL_mean")) |>
   mutate(ensemble = paste0(ensemble,type)) |>
   ggplot(aes(x = datetime)) +
   geom_line(aes(y = prediction, group = ensemble)) +
