@@ -58,7 +58,7 @@ prior <- arrow::open_dataset(combined_path) |>
          prediction = ifelse(variable == "co2flux_umolm2s_mean", (prediction * 1000) / (60 * 60 * 24),prediction)) |>
   collect() |>
   pivot_wider(names_from = variable, values_from = prediction) |>
-  mutate(fDOM_QSU_mean = (OGM_doc + OGM_docr + fdom$conversion_intercept) / fdom$conversion_slope)  |>
+  mutate(fDOM_QSU_mean = (OGM_doc + OGM_docr - fdom$conversion_intercept) / fdom$conversion_slope)  |>
   select(-OGM_doc, -OGM_docr) |>
   pivot_longer(-c("depth_m", "datetime",  "ensemble"), names_to = "variable", values_to = "prediction") |>
   filter(!is.na(prediction))
