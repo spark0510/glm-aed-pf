@@ -75,6 +75,8 @@ out <- generate_posteriors(prior, pars, weights)
 
 par_posterior <- out$par_posterior
 posterior <- out$posterior
+
+forecast_df <- standardize_forecast(posterior, config)
 #Note the posterior is the forecast
 
 arrow::write_parquet(posterior, "forecast.parquet")

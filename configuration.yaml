@@ -20,3 +20,6 @@ obs_sd: [0.5, 2, 2.5, 1.0, 1000]
 par_config_file: "parameter_calibration_config.csv"
 states_config_file: "states_config.csv"
 focal_parameters: ["lw_factor", "Rdom_minerl", "R_growth", "Kw", "Fsed_oxy"]
+project_id: "vera4cast"
+model_id: "glm-aedV2"
+
