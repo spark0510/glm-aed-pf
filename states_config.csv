@@ -5,9 +5,9 @@ OXY_oxy,wq_init_vals,1,normal,300,0,0,DO_mgL_mean,31.25,0,1
 CAR_dic,wq_init_vals,1,normal,100,0,0,NA,1,0,1
 CAR_ch4,wq_init_vals,1,normal,1,0,0,NA,1,0,1
 SIL_rsi,wq_init_vals,1,normal,115,0,0,NA,1,0,1
-NIT_amm,wq_init_vals,1,uniform,0.001,4,0,NA,1,0,1
-NIT_nit,wq_init_vals,1,uniform,0.001,2,0,NA,1,0,1
-PHS_frp,wq_init_vals,1,uniform,0.001,2,0,NA,1,0,1
+NIT_amm,wq_init_vals,1,uniform,0,4,0,NA,1,0,1
+NIT_nit,wq_init_vals,1,uniform,0,0.5,0,NA,1,0,1
+PHS_frp,wq_init_vals,1,uniform,0,1,0,NA,1,0,1
 OGM_doc,wq_init_vals,1,normal,50,0,0,fDOM_QSU_mean,29.62654,-151.3407,0.1
 OGM_docr,wq_init_vals,1,normal,250,0,0,fDOM_QSU_mean,29.62654,-151.3407,0.9
 OGM_poc,wq_init_vals,1,normal,100,0,0,NA,1,0,1
