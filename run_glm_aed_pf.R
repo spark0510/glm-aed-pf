@@ -52,9 +52,9 @@ dir.create(file.path(working_directory, "ensemble_output"), showWarnings = FALSE
 bench::bench_time(
   furrr::future_walk(1:config$nmembers,
                      .f = function(m, met_inflow_ensembles, config, output_path)
-                       {
+                     {
                        run_ensemble(m, met_inflow_ensembles, config)
-                       },
+                     },
                      met_inflow_ensembles,
                      config,
                      output_path = file.path(working_directory, "ensemble_output")
@@ -124,8 +124,7 @@ posterior <- map_dfr(1:nsamples, function(i, samples, prior){
            type = "2-posterior")
 },
 samples,
-prior
-)
+prior)
 
 #Note the posterior is the forecast
 
@@ -142,7 +141,6 @@ nmembers = config$nmembers,
 nsamples)
 
 arrow::write_dataset(par_posterior, "parameters.parquet")
-
 
 ## Extra stuff to visualize forecast
 
