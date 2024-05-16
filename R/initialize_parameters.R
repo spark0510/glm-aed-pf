@@ -1,39 +1,37 @@
 initialize_parameters <- function(config){
   
-  lw <- rep(NA, config$nmembers)
-  Kw <- rep(NA, config$nmembers)
-  Rgrowth1 <- rep(NA, config$nmembers)
-  Rgrowth2 <- rep(NA, config$nmembers)
-  Rgrowth3 <- rep(NA, config$nmembers)
-  Fsed_oxy1 <- rep(NA, config$nmembers)
-  Fsed_oxy2 <- rep(NA, config$nmembers)
-  Fsed_oxy3 <- rep(NA, config$nmembers)
-  Fsed_oxy4 <- rep(NA, config$nmembers)
-  K_N1 <- rep(NA, config$nmembers)
-  K_N2 <- rep(NA, config$nmembers)
-  K_N3 <- rep(NA, config$nmembers)
+  par_config <- read_csv(config$par_config_file, show_col_types = FALSE) |> 
+    dplyr::filter(par_name %in% config$focal_parameters)
   
-  for(m in 1:config$nmembers){
+  unique_pars <- unique(par_config$par_name)
+  
+  pars <- list()
+  
+  for(i in 1:length(unique_pars)){
     
-    lw <- rnorm(config$nmembers, 1, 0.3)
-    Kw <- runif(config$nmembers, 0.6, 0.9)
-    Rgrowth1 <- rnorm(config$nmembers, 1, 0.5)
-    Rgrowth2 <- rnorm(config$nmembers, 2, 0.5)
-    Rgrowth3 <- rnorm(config$nmembers, 3, 0.5)
-    Fsed_oxy1 <- rnorm(config$nmembers, -40, 5)
-    Fsed_oxy2 <- rnorm(config$nmembers, -30, 5)
-    Fsed_oxy3 <- rnorm(config$nmembers, -20, 5)
-    Fsed_oxy4 <- rnorm(config$nmembers, -10, 5)
-    K_N1 <- rnorm(config$nmembers, 1, 0.5)
-    K_N2 <- rnorm(config$nmembers, 1, 0.5)
-    K_N3 <- rnorm(config$nmembers, 1, 0.5)
+    par <- par_config |> 
+      dplyr::filter(par_name == unique_pars[i])
+    
+    
+    pars[[i]] <- list()
+    pars[[i]]$par_name <- par$par_name[1] 
+    pars[[i]]$par_file <- par$par_file[1] 
+    pars[[i]]$value <- list()
+
+  for(m in 1:config$nmembers){
+    value <- NULL
+    pars[[i]]$value[[m]] <- list()
+  for(p in 1:nrow(par)){
+    if(par$family[p] == "normal"){
+      value<- c (value, rnorm(1, par$dist_par1[p], par$dist_par2[p]))
+    }else if(par$family[p] == "uniform"){
+      value <- c(value, runif(1, par$dist_par1[p], par$dist_par2[p]))
+    }
   }
-  pars <- list(lw = lw,
-               Kw = Kw,
-               Rgrowth1 = Rgrowth1, Rgrowth2 = Rgrowth2, Rgrowth3 = Rgrowth3,
-               #K_N1 = K_N1, K_N2 = K_N2, K_N3 = K_N3,
-               Fsed_oxy1 = Fsed_oxy1, Fsed_oxy2 = Fsed_oxy2, Fsed_oxy3 = Fsed_oxy3, Fsed_oxy4 = Fsed_oxy4)
-  
+    pars[[i]]$value[[m]] <- value
+  }
+  }
+
   jsonlite::write_json(pars, "pars_prior.json", pretty = TRUE)
+  }
   
-}

@@ -1,0 +1,22 @@
+forecast_start_datetime: "2021-07-01"
+look_back: 20
+horizon: 30
+nmembers: 10
+focal_vars: ["temp","PHY_tchla", "OXY_oxy", "OGM_doc", "OGM_docr", 
+              "PHY_cyano","PHY_green", "PHY_diatom",
+              "NIT_amm", "NIT_nit", "PHS_frp"]
+focal_depths: [0.1, 1.6, 5, 9]
+site_id: "fcre"
+met_bucket: "bio230121-bucket01/flare/drivers/met/gefs-v12"
+met_endpoint: "renc.osn.xsede.org"
+historical_inflow: "fcre-targets-inflow.csv"
+historical_met: 
+historical_insitu: "https://renc.osn.xsede.org/bio230121-bucket01/vera4cast/targets/project_id=vera4cast/duration=P1D/daily-insitu-targets.csv.gz"
+glm_output_time_step: 12
+nsamples: 100
+include_fluxes: FALSE
+obs_names: ["Temp_C_mean", "Chla_ugL_mean", "DO_mgL_mean", "Secchi_m_sample", "fDOM_QSU_mean"]
+obs_sd: [0.5, 2, 2.5, 1.0, 1000]
+par_config_file: "parameter_calibration_config.csv"
+states_config_file: "states_config.csv"
+focal_parameters: ["lw_factor", "Rdom_minerl", "R_growth", "Kw", "Fsed_oxy"]

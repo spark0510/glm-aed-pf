@@ -1,0 +1,15 @@
+par_name,par_index,par_file,family,dist_par1,dist_par2
+lw_factor,1,glm3.nml,normal,1,0.3
+Rdom_minerl,1,aed2.nml,uniform,0.0002,0.01
+R_growth,1,aed_phyto_pars.csv,normal,1,0.5
+R_growth,2,aed_phyto_pars.csv,normal,2,0.5
+R_growth,3,aed_phyto_pars.csv,normal,3,0.5
+Kw,1,glm3.nml,uniform,0.4,0.7
+sed_temp_mean,1,glm3.nml,uniform,5,12
+sed_temp_mean,2,glm3.nml,uniform,5,12
+sed_temp_mean,3,glm3.nml,uniform,12,14
+sed_temp_mean,4,glm3.nml,uniform,12,14
+Fsed_oxy,1,aed2.nml,normal,-40,5
+Fsed_oxy,2,aed2.nml,normal,-30,5
+Fsed_oxy,3,aed2.nml,normal,-20,5
+Fsed_oxy,4,aed2.nml,normal,-10,5

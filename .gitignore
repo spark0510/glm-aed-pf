@@ -58,4 +58,6 @@ outflow*
 inflow*
 output/
 pars_prior.json
+.DS_Store
+*.parquet
 

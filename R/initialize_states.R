@@ -1,6 +1,8 @@
 initialize_states <- function(config){
   obs <- read_csv(config$historical_insitu, show_col_types = FALSE) |>
     mutate(datetime = as_date(datetime))
+  
+  states_config <- read_csv(config$states_config_file, show_col_types = FALSE)
   #
   focal_obs <- obs |>
     filter(datetime == config$start_datetime,
@@ -10,47 +12,81 @@ initialize_states <- function(config){
   
   obs_depths <- unique(focal_obs$depth_m)
   
-  init <- list()
+  glm_names <- unique(states_config$glm_name)
+  
+  
+  ensemble_init <- list()
   
   for(m in 1:config$nmembers){
-    init[m] <- m
-    init[[m]]$the_depths <- obs_depths
-    init[[m]]$the_temps <- round(filter(focal_obs, variable == "Temp_C_mean")$observation, 4)
-    init[[m]]$the_sals <- rep(0.1, length(obs_depths))
-    init[[m]]$lake_depth <- 9.4
     
-    oxy_depths <- filter(focal_obs, variable == "DO_mgL_mean")$depth_m
-    oxy <- filter(focal_obs, variable == "DO_mgL_mean")$observation*(1000/32)
-    init[[m]]$wq_init_vals <- round(approx(oxy_depths, oxy, obs_depths, rule = 2)$y, 4)
-    init[[m]]$wq_names <- "OXY_oxy"
-    #init[[m]]$wq_init_vals <- c(init[[m]]$wq_init_vals, pmax(rnorm(length(obs_depths), 0.2, 0.1),0))
-    init[[m]]$wq_init_vals <- c(init[[m]]$wq_init_vals, pmax(runif(length(obs_depths), 0, 0.5),0))
-    init[[m]]$wq_names <- c(init[[m]]$wq_names, "NIT_nit")
+    init <- list()
     
-    #init[[m]]$wq_init_vals <- c(init[[m]]$wq_init_vals, pmax(rnorm(length(obs_depths), 1.5, 0.5),0))
-    init[[m]]$wq_init_vals <- c(init[[m]]$wq_init_vals, pmax(runif(length(obs_depths), 0, 2),0))
-    init[[m]]$wq_names <- c(init[[m]]$wq_names, "NIT_amm")
+    for(s in 1:length(glm_names)){
+      
+      init[[s]] <- list()
+      init[[s]]$glm_name <- glm_names[s]
+      init[[s]]$value <- list()
+      combined_value <- NULL
+      
+      same_glm_names <- states_config |> filter(glm_name == glm_names[s])
+      
+      
+      for(v in 1:nrow(same_glm_names)){
+        
+        curr_state <- states_config |> filter(state_names == same_glm_names$state_names[v])
+        
+        if(curr_state$multi_depth == 1){
+          curr_depths <- obs_depths
+        }else{
+          curr_depths <- 1
+        }
+
+        if(!is.na(curr_state$observation)){
+          var_obs <- filter(focal_obs, variable == curr_state$observation)$observation
+          var_depths <- filter(focal_obs, variable == curr_state$observation)$depth_m
+          if(length(var_obs) > 1){
+            var_value <- approx(var_depths, var_obs, curr_depths, rule = 2)$y
+          }else{
+            var_value <- rep(var_obs, length(curr_depths))
+          }
+          if(curr_state$family == "normal"){
+            var_value <- rnorm(length(var_value), var_value, curr_state$dist_par2)
+          }else if(curr_state$family == "uniform"){
+            warning("Only normal distributions are currently supported for states that use observation to initialize")
+          }
+          
+        }else{
+          if(curr_state$family == "normal"){
+            var_value <- rnorm(length(curr_depths),curr_state$dist_par1, curr_state$dist_par2)
+          }else if(curr_state$family == "uniform"){
+            var_value <- runif(length(var_value), curr_state$dist_par1, curr_state$dist_par2)
+          }
+        }
+        var_value <- curr_state$conversion_multiplier * 
+          (curr_state$conversion_intercept + curr_state$conversion_slope * var_value)
+        
+
+        var_value[which(var_value < curr_state$lower_bound)] <- curr_state$lower_bound
+        
+        init[[s]]$value  <- unlist(c(init[[s]]$value ,  round(var_value, 4)))
+        
+      }
+    }
     
-    init[[m]]$wq_init_vals <- c(init[[m]]$wq_init_vals, pmax(runif(length(obs_depths), 0, 1),0))
-    init[[m]]$wq_names <- c(init[[m]]$wq_names, "PHS_frp")
+    if("wq_init_vals" %in% glm_names){
+      s <- length(glm_names) + 1
+      init[[s]] <- list()
+      init[[s]]$glm_name <- "wq_names"
+      init[[s]]$value <- pull(states_config |> filter(glm_name == "wq_init_vals"), "state_names")
+    }
+  
+    s <- length(glm_names) + 2
+    init[[s]] <- list()
+    init[[s]]$glm_name <- "the_depths"
+    init[[s]]$value <- obs_depths
     
-    total_doc <- rep((-151.3407 + 29.62654 * filter(focal_obs, variable == "fDOM_QSU_mean")$observation), length(obs_depths))
-    init[[m]]$wq_names <- c(init[[m]]$wq_names, "OGM_docr")
-    init[[m]]$wq_init_vals <- c(init[[m]]$wq_init_vals, round(total_doc*0.9, 4))
-    init[[m]]$wq_names <- c(init[[m]]$wq_names, "OGM_doc")
-    init[[m]]$wq_init_vals <- c(init[[m]]$wq_init_vals, round(total_doc*0.1, 4))
-    
-    total_chla <- rep(filter(focal_obs, variable == "Chla_ugL_mean")$observation, length(obs_depths))
-    cyano <- total_chla * 0.1 * (1 / ((1 / 500) * 12))
-    init[[m]]$wq_names <- c(init[[m]]$wq_names, "PHY_cyano")
-    init[[m]]$wq_init_vals <- c(init[[m]]$wq_init_vals, round(cyano, 4))
-    green <- total_chla * 0.4 * (1 / ((1 / 30) * 12))
-    init[[m]]$wq_names <- c(init[[m]]$wq_names, "PHY_green")
-    init[[m]]$wq_init_vals <- c(init[[m]]$wq_init_vals, round(green, 4))
-    diatom <- total_chla * 0.4 * (1 / ((1 / 30) * 12))
-    init[[m]]$wq_names <- c(init[[m]]$wq_names, "PHY_diatom")
-    init[[m]]$wq_init_vals <- c(init[[m]]$wq_init_vals, round(diatom, 4))
+    ensemble_init[[m]] <- init
   }
   
-  jsonlite::write_json(init, "states_prior.json", pretty = TRUE)
+  jsonlite::write_json(ensemble_init, "states_prior.json", pretty = TRUE)
 }
