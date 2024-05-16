@@ -37,18 +37,18 @@ config$obs_names <- c("Temp_C_mean", "Chla_ugL_mean", "DO_mgL_mean", "Secchi_m_s
 config$obs_sd <- c(0.5, 2, 2.5, 1.0, 1000)
 
 initialize_parameters(config)
-## FaaSr - copy json to S3
+## FaaSr - this function generates a json that needs to be copied json to S3
 
 met_inflow_ensembles <- generate_inputs(config)
-
 ## FaaSr - copy met and inflow csvs to S3
 
 ### Initial conditions from data
 initialize_states(config)
-
+## FaaSr - this function generates a json that needs to be copied json to S3
 
 dir.create(file.path(working_directory, "ensemble_output"), showWarnings = FALSE)
 # Note output_path could be an S3 file system
+# run_ensemble() can be run in parallel using FaaSr.  What to do about met_inflow_ensembles?
 bench::bench_time(
   furrr::future_walk(1:config$nmembers,
                      .f = function(m, met_inflow_ensembles, config, output_path)
@@ -61,17 +61,17 @@ bench::bench_time(
   )
 )
 
+#Clean up
 unlink(list.files(working_directory, pattern = "glm3-", full.names = TRUE))
 unlink(list.files(working_directory, pattern = "WQ-", full.names = TRUE))
 unlink(list.files(working_directory, pattern = "lake-", full.names = TRUE))
 unlink(list.files(working_directory, pattern = "aed2-", full.names = TRUE))
 unlink(list.files(working_directory, pattern = "aed_phyto_pars-", full.names = TRUE))
 
+#This pulls together the results
 dir.create("output",showWarnings = FALSE)
 arrow::open_dataset("ensemble_output/") |> arrow::write_dataset("output")
 unlink("ensemble_output", recursive = TRUE)
-
-## Post processing of 
 
 obs <- read_csv(config$historical_insitu, show_col_types = FALSE) |>
   mutate(datetime = as_date(datetime)) |>
@@ -127,6 +127,25 @@ samples,
 prior
 )
 
+#Note the posterior is the forecast
+
+arrow::write_dataset(posterior, "forecast.parquet")
+
+par_posterior <- map_dfr(1:length(names(pars)), function(i, samples, pars, nmembers, nsamples){
+  tmp_df <- tibble(par = names(pars)[i],
+                   type = c(rep("1-prior",config$nmembers), rep("2-post",nsamples)),
+                   value = c(unlist(pars[i][]), unlist(pars[i])[samples]))
+},
+samples,
+pars,
+nmembers = config$nmembers,
+nsamples)
+
+arrow::write_dataset(par_posterior, "parameters.parquet")
+
+
+## Extra stuff to visualize forecast
+
 obs_df <- posterior |>
   select(variable, observation, depth_m, datetime) |>
   distinct() |>
@@ -176,16 +195,6 @@ posterior |>
   facet_grid(variable~depth_m, scales = "free_y")
 
 ## Parameters
-par_posterior <- map_dfr(1:length(names(pars)), function(i, samples, pars, nmembers, nsamples){
-  tmp_df <- tibble(par = names(pars)[i],
-                   type = c(rep("1-prior",config$nmembers), rep("2-post",nsamples)),
-                   value = c(unlist(pars[i][]), unlist(pars[i])[samples]))
-},
-samples,
-pars,
-nmembers = config$nmembers,
-nsamples
-)
 
 ggplot(par_posterior, aes(x = value, color = type)) +
   geom_density() +
