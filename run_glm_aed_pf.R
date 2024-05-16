@@ -2,11 +2,6 @@ working_directory <- here::here()
 setwd(working_directory)
 purrr::walk(list.files("R", recursive = TRUE, full.names = TRUE), function(file){source(file)})
 library(tidyverse)
-#Step 1: Set up input files for ensemble drivers
-#Step 2: Generate parameter distributions and assign to ensemble members
-#Step 3: Create matrix to store output and weights
-#Step 4: Generate initial nmls for each ensemble member
-#Step 5: Loop over ensemble member and run GLM-AED
 
 config <- read_configuration(file = "configuration.yaml")
 
@@ -18,8 +13,8 @@ met_inflow_ensembles <- generate_inputs(config) ## FaaSr - copy met and inflow c
 
 initialize_states(config) ## FaaSr - this function generates a json that needs to be copied json to S3
 
-
-dir.create(file.path(working_directory, "ensemble_output"), showWarnings = FALSE)
+ensemble_path <- "ensemble_output"
+dir.create(file.path(working_directory, ensemble_path), showWarnings = FALSE)
 # Note output_path could be an S3 file system
 # run_ensemble() can be run in parallel using FaaSr.  What to do about met_inflow_ensembles?
 future::plan("future::multisession", workers = parallel::detectCores())
@@ -31,24 +26,19 @@ bench::bench_time(
                      },
                      met_inflow_ensembles,
                      config,
-                     output_path = file.path(working_directory, "ensemble_output")
+                     output_path = file.path(working_directory, ensemble_path)
   )
 )
 
 clean_up_run(working_directory)
   
-#This pulls together the results
-dir.create("output",showWarnings = FALSE)
-arrow::open_dataset("ensemble_output/") |> arrow::write_dataset("output")
-unlink("ensemble_output", recursive = TRUE)
+#This pulls together the results into a single parquet
+combined_path <- "output"
+combine_ensembles(ensemble_path = ensemble_path, combined_path = combined_path)
+
 
 # Standardize obs and ensemble output
-obs <- read_csv(config$historical_insitu, show_col_types = FALSE) |>
-  mutate(datetime = as_date(datetime)) |>
-  filter(site_id == config$site_id) |>
-  mutate(depth_m = ifelse(is.na(depth_m), -1, depth_m))
-
-prior <- arrow::open_dataset("output/") |>
+prior <- arrow::open_dataset(combined_path) |>
   mutate(variable = ifelse(variable == "temp", "Temp_C_mean", variable),
          variable = ifelse(variable == "PHY_tchla", "Chla_ugL_mean", variable),
          variable = ifelse(variable == "OXY_oxy", "DO_mgL_mean", variable),
@@ -64,6 +54,12 @@ prior <- arrow::open_dataset("output/") |>
   select(-OGM_doc, -OGM_docr) |>
   pivot_longer(-c("depth_m", "datetime",  "ensemble"), names_to = "variable", values_to = "prediction") |>
   filter(!is.na(prediction))
+
+
+obs <- read_csv(config$historical_insitu, show_col_types = FALSE) |>
+  mutate(datetime = as_date(datetime)) |>
+  filter(site_id == config$site_id) |>
+  mutate(depth_m = ifelse(is.na(depth_m), -1, depth_m))
 
 out <- calc_particle_weights(prior, obs, config)
 
