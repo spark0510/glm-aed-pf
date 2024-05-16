@@ -1,9 +1,10 @@
-run_ensemble <- function(m, met_inflow_ensembles, config){
+run_ensemble <- function(m, met_inflow_ensembles, config, output_path){
   
-  ## FaasR
+  #Need to copy in from FaaSr???  Better to be a remote read
   init <- jsonlite::read_json("states_prior.json")
   pars <- jsonlite::read_json("pars_prior.json")
   
+  #The NML needs to be copied from S3 or a GitHub repo using download.file
   file.copy("glm3_initial.nml", paste0("glm3-",m,".nml"), overwrite = TRUE)
   file.copy("aed2.nml", paste0("aed2-",m,".nml"), overwrite = TRUE)
   file.copy("aed_phyto_pars.csv", paste0("aed_phyto_pars-",m,".csv"), overwrite = TRUE)
@@ -107,7 +108,7 @@ run_ensemble <- function(m, met_inflow_ensembles, config){
     summarise(prediction = mean(prediction),
               .by = c("datetime","depth_m","ensemble", "variable"))
   
-  arrow::write_dataset(ens_df, file.path(working_directory, "ensemble_output"), partitioning = "ensemble")
+  arrow::write_dataset(ens_df, output_path, partitioning = "ensemble")
   
   unlink(file.path(file.path(working_directory, paste0("output-",m,".nc"))))
   

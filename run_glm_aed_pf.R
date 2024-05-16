@@ -48,14 +48,16 @@ initialize_states(config)
 
 
 dir.create(file.path(working_directory, "ensemble_output"), showWarnings = FALSE)
+# Note output_path could be an S3 file system
 bench::bench_time(
   furrr::future_walk(1:config$nmembers,
-                     .f = function(m, met_inflow_ensembles, config)
+                     .f = function(m, met_inflow_ensembles, config, output_path)
                        {
                        run_ensemble(m, met_inflow_ensembles, config)
                        },
                      met_inflow_ensembles,
-                     config
+                     config,
+                     output_path = file.path(working_directory, "ensemble_output")
   )
 )
 
