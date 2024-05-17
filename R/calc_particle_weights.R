@@ -16,10 +16,8 @@ calc_particle_weights <- function(prior, obs, config){
     filter(datetime < config$forecast_start_datetime,
            !is.na(observation),
            !is.na(sd)) |>
-    mutate(logLL = dnorm(x = prediction, mean = observation, sd = sd, log= TRUE),
-           LL = dnorm(x = prediction, mean = observation, sd = sd, log= FALSE)) |>
-    summarize(sum_logLL = sum(logLL) / ndays, count = n(), .by = "ensemble") |>
-    #summarize(sum_logLL = sum(logLL)/config$nmembers, count = n(), .by = "ensemble") |>
+    mutate(logLL = dnorm(x = prediction, mean = observation, sd = sd, log= TRUE)) |>
+    summarize(sum_logLL = sum(logLL)/n(), count = n(), .by = "ensemble") |>
     mutate(relative_weight = exp(sum_logLL) / sum(exp(sum_logLL)),                                       
            exp = exp(sum_logLL),
            sum_exp = sum(exp(sum_logLL))) |>
