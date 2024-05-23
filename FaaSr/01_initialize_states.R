@@ -5,7 +5,7 @@ faasr_initialize_states <- function(){
   library(tidyverse)
 
   conf_files <- c("aed2_zoop_pars.nml", "aed2.nml", "configuration.yaml", 
-                  "fcre-targets-inflow.csv", "glm3_initial.nml",
+                  "fcre-targets-inflow.csv", "glm3_initial.nml", "aed_phyto_pars.csv",
                   "parameter_calibration_config.csv", "states_config.csv")
 
   for (conf_file in conf_files){
