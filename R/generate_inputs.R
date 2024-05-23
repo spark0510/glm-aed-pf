@@ -7,8 +7,10 @@ generate_inputs <- function(config){
                                 forecast_horizon =  config$horizon,
                                 site_id = config$site_id,
                                 use_s3 = TRUE,
-                                bucket = config$met_bucket ,
-                                endpoint = config$met_endpoint,
+                                #bucket = config$met_bucket,
+                                #endpoint = config$met_endpoint,
+                                folder = config$met_folder,
+                                server_name = config$met_server_name,
                                 use_hive_met = TRUE)
   
   met_ensemble_index <- sample(1:length(met_out$filenames), size = config$nmembers, replace = TRUE)
@@ -46,8 +48,10 @@ generate_inputs <- function(config){
                                                         forecast_horizon =  config$horizon,
                                                         site_id = config$site_id,
                                                         use_s3 = FALSE,
-                                                        bucket = NA,
-                                                        endpoint = NA,
+                                                        #bucket = NA,
+                                                        #endpoint = NA,
+                                                        server_name = NA,
+                                                        folder = NA,
                                                         local_directory = NA,
                                                         use_forecast = FALSE,
                                                         use_ler_vars = FALSE)

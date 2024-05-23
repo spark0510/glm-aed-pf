@@ -1,0 +1,315 @@
+{
+    "ComputeServers": {
+        "My_GitHub_Account": {
+            "FaaSType": "GitHubActions",
+            "UserName": "spark0510",
+            "ActionRepoName": "flarer-aed",
+            "Branch": "main"
+        }
+    },
+    "DataStores": {
+        "My_Minio_Bucket": {
+            "Endpoint": "http://149.165.159.29:9000",
+            "Region": "us-east-1",
+            "Bucket": "faasr-flare-aed",
+            "Writable": "TRUE"
+        },
+        "FLARE_S3_Bucket": {
+            "Endpoint": "https://renc.osn.xsede.org",
+            "Region": "",
+            "Bucket": "bio230121-bucket01",
+            "Writable": "TRUE",
+            "Anonymous": "TRUE"
+        }
+    },
+    "FunctionList": {
+        "start": {
+            "FunctionName": "nullstart",
+            "FaaSServer": "My_GitHub_Account",
+            "InvokeNext": [
+                "init_param",
+                "init_state",
+                "init_met"
+            ]
+        },
+        "init_param": {
+            "FunctionName": "faasr_initialize_parameter",
+            "FaaSServer": "My_GitHub_Account",
+            "InvokeNext": "mid_point"
+        },
+        "init_state": {
+            "FunctionName": "faasr_initialize_states",
+            "FaaSServer": "My_GitHub_Account",
+            "InvokeNext": "mid_point"
+        },
+        "init_met": {
+            "FunctionName": "faasr_met_inflow_ensembles",
+            "FaaSServer": "My_GitHub_Account",
+            "InvokeNext": "mid_point"
+        },
+        "mid_point": {
+            "FunctionName": "nullstart",
+            "FaaSServer": "My_GitHub_Account",
+            "InvokeNext": [
+                "run_ensem_01",
+                "run_ensem_02",
+                "run_ensem_03",
+                "run_ensem_04",
+                "run_ensem_05",
+                "run_ensem_06",
+                "run_ensem_07",
+                "run_ensem_08",
+                "run_ensem_09",
+                "run_ensem_10",
+                "run_ensem_11",
+                "run_ensem_12",
+                "run_ensem_13",
+                "run_ensem_14",
+                "run_ensem_15",
+                "run_ensem_16",
+                "run_ensem_17",
+                "run_ensem_18",
+                "run_ensem_19",
+                "run_ensem_20"
+            ]
+        },
+        "run_ensem_01": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "1",
+                "end": "25"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_02": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "26",
+                "end": "50"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_03": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "51",
+                "end": "75"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_04": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "76",
+                "end": "100"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_05": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "101",
+                "end": "125"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_06": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "126",
+                "end": "150"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_07": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "151",
+                "end": "175"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_08": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "176",
+                "end": "200"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_09": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "201",
+                "end": "225"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_10": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "226",
+                "end": "250"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_11": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "251",
+                "end": "275"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_12": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "276",
+                "end": "300"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_13": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "301",
+                "end": "325"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_14": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "326",
+                "end": "350"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_15": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "351",
+                "end": "375"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_16": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "376",
+                "end": "400"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_17": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "401",
+                "end": "425"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_18": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "426",
+                "end": "450"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_19": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "451",
+                "end": "475"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "run_ensem_20": {
+            "FunctionName": "faasr_run_ensemble",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "start": "476",
+                "end": "500"
+            },
+            "InvokeNext": "combine_ensem"
+        },
+        "combine_ensem": {
+            "FunctionName": "faasr_combine_ensembles",
+            "FaaSServer": "My_GitHub_Account"
+        }
+    },
+    "ActionContainers": {
+        "start": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "mid_point": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "init_param": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "init_met": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "init_state": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_01": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_02": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_03": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_04": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_05": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_06": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_07": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_08": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_09": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_10": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_11": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_12": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_13": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_14": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_15": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_16": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_17": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_18": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_19": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "run_ensem_20": "ghcr.io/spark0510/flare-test:1.0.0.1",
+        "combine_ensem": "ghcr.io/spark0510/flare-test:1.0.0.1"
+    },
+    "FunctionGitRepo": {
+        "nullstart": "spark0510/FaaSr-examples/nullstart/nullstart.R",
+        "faasr_initialize_parameter": [
+            "spark0510/glm-aed-pf/FaaSr",
+            "spark0510/glm-aed-pf/R/"
+        ],
+        "faasr_initialize_states": [
+            "spark0510/glm-aed-pf/FaaSr",
+            "spark0510/glm-aed-pf/R/"
+        ],
+        "faasr_met_inflow_ensembles": [
+            "spark0510/glm-aed-pf/FaaSr",
+            "spark0510/glm-aed-pf/R/"
+        ],
+        "faasr_run_ensemble": [
+            "spark0510/glm-aed-pf/FaaSr",
+            "spark0510/glm-aed-pf/R/"
+        ],
+        "faasr_combine_ensembles": [
+            "spark0510/glm-aed-pf/FaaSr",
+            "spark0510/glm-aed-pf/R/"
+        ]
+    },
+    "FunctionInvoke": "start",
+    "FaaSrLog": "FaaSrLog",
+    "DefaultDataStore": "My_Minio_Bucket"
+}

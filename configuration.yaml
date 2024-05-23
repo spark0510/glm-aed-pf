@@ -7,8 +7,8 @@ focal_vars: ["temp","PHY_tchla", "OXY_oxy", "OGM_doc", "OGM_docr",
               "NIT_amm", "NIT_nit", "PHS_frp"]
 focal_depths: [0.1, 1.6, 5, 9]
 site_id: "fcre"
-met_bucket: "bio230121-bucket01/flare/drivers/met/gefs-v12"
-met_endpoint: "renc.osn.xsede.org"
+met_folder: "flare/drivers/met/gefs-v12"
+met_server_name: "FLARE_S3_Bucket"
 historical_inflow: "fcre-targets-inflow.csv"
 historical_met: 
 historical_insitu: "https://renc.osn.xsede.org/bio230121-bucket01/vera4cast/targets/project_id=vera4cast/duration=P1D/daily-insitu-targets.csv.gz"

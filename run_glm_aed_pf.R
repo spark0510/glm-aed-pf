@@ -1,7 +1,20 @@
+run_glm_aed_pf <- function(){
+
 working_directory <- here::here()
 setwd(working_directory)
-purrr::walk(list.files("R", recursive = TRUE, full.names = TRUE), function(file){source(file)})
+#purrr::walk(list.files("R", recursive = TRUE, full.names = TRUE), function(file){source(file)})
 library(tidyverse)
+
+conf_files <- c("aed2_zoop_pars.nml", "aed2.nml", "configuration.yaml", 
+                  "fcre-targets-inflow.csv", "glm3_initial.nml",
+                  "parameter_calibration_config.csv", "states_config.csv")
+
+for (conf_file in conf_files){
+  FaaSr::faasr_get_file(server_name="My_Minio_Bucket",
+                        remote_folder="configuration", 
+                        remote_file=conf_file, 
+                        local_file=conf_file)
+}
 
 config <- read_configuration(file = "configuration.yaml")
 
@@ -89,6 +102,20 @@ pars <- jsonlite::read_json("pars_prior.json")
 
 arrow::write_parquet(par_posterior, "parameters.parquet")
 
+FaaSr::faasr_put_file(server_name="My_Minio_Bucket",
+                        remote_folder="output", 
+                        remote_file="part-0.parquet", 
+                        local_folder="output", 
+                        local_file="part-0.parquet")
+
+FaaSr::faasr_put_file(server_name="My_Minio_Bucket",
+                        remote_file="forecast.parquet", 
+                        local_file="forecast.parquet")                        
+
+FaaSr::faasr_put_file(server_name="My_Minio_Bucket",
+                        remote_file="parameters.parquet", 
+                        local_file="parameters.parquet")
+
 ## Extra stuff to visualize forecast
 
 p <- plot_prior_post(posterior, prior, obs_df, focal_depth = 1.6)
@@ -103,8 +130,4 @@ p
 p <- plot_parameters(par_posterior)
 p
 
-
-
-
-
-
+}
