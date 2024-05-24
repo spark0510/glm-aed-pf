@@ -1,4 +1,4 @@
-generate_inputs <- function(config){
+generate_inputs <- function(config, working_directory){
   
   met_out <- generate_met_files(obs_met_file = NULL,
                                 out_dir = working_directory,

@@ -18,7 +18,7 @@ faasr_met_inflow_ensembles <- function(){
 
   config <- read_configuration(file = "configuration.yaml")
 
-  met_inflow_ensembles <- generate_inputs(config) ## FaaSr - copy met and inflow csvs to S3
+  met_inflow_ensembles <- generate_inputs(config, working_directory) ## FaaSr - copy met and inflow csvs to S3
 
   write_rds(met_inflow_ensembles, "met_inflow_ensembles.RDS")
 
