@@ -1,6 +1,6 @@
 faasr_combine_ensembles <- function(){
   
-  working_directory <- here::here()
+  working_directory <<- here::here()
   setwd(working_directory)
   #purrr::walk(list.files("R", recursive = TRUE, full.names = TRUE), function(file){source(file)})
   library(tidyverse)
