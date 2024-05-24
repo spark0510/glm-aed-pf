@@ -1,4 +1,4 @@
-run_ensemble <- function(m, met_inflow_ensembles, config, output_path){
+run_ensemble <- function(m, met_inflow_ensembles, config, output_path, working_directory){
   
   #Need to copy in from FaaSr???  Better to be a remote read
   init <- jsonlite::read_json("states_prior.json")

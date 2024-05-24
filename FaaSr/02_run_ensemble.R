@@ -35,9 +35,9 @@ faasr_run_ensemble <- function(start, end){
   future::plan("future::multisession", workers = parallel::detectCores())
   bench::bench_time(
     furrr::future_walk(start:end,
-                      .f = function(m, met_inflow_ensembles, config, output_path)
+                      .f = function(m, met_inflow_ensembles, config, output_path, working_directory)
                       {
-                        run_ensemble(m, met_inflow_ensembles, config, output_path)
+                        run_ensemble(m, met_inflow_ensembles, config, output_path, working_directory)
                       },
                       met_inflow_ensembles,
                       config,
