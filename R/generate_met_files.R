@@ -59,14 +59,12 @@ generate_met_files<- function(obs_met_file = NULL,
         #forecast_dir <- arrow::s3_bucket(bucket = file.path(bucket, paste0("stage2/reference_datetime=",forecast_date),paste0("site_id=",lake_name_code)),
         #                                 endpoint_override =  endpoint, anonymous = TRUE)
         forecast_dir <- FaaSr::faasr_arrow_s3_bucket(server_name=server_name, 
-                                                     faasr_prefix=file.path(folder, paste0("stage2/reference_datetime=",forecast_date),paste0("site_id=",lake_name_code)),
-                                                     anonymous = TRUE)
+                                                     faasr_prefix=file.path(folder, paste0("stage2/reference_datetime=",forecast_date),paste0("site_id=",lake_name_code)))
       }else{
         #forecast_dir <- arrow::s3_bucket(bucket = file.path(bucket, "stage2/parquet", forecast_hour,forecast_date, lake_name_code),
         #                                 endpoint_override =  endpoint, anonymous = TRUE)
         forecast_dir <- FaaSr::faasr_arrow_s3_bucket(server_name=server_name, 
-                                                     faasr_prefix=file.path(folder, "stage2/parquet", forecast_hour,forecast_date, lake_name_code),
-                                                     anonymous = TRUE)
+                                                     faasr_prefix=file.path(folder, "stage2/parquet", forecast_hour,forecast_date, lake_name_code))
       }
       
       FLAREr:::unset_arrow_vars(vars)
@@ -89,14 +87,12 @@ generate_met_files<- function(obs_met_file = NULL,
         #past_dir <- arrow::s3_bucket(bucket = file.path(bucket, paste0("stage3/site_id=",lake_name_code)),
         #                             endpoint_override =  endpoint, anonymous = TRUE)
         past_dir <- FaaSr::faasr_arrow_s3_bucket(server_name=server_name, 
-                                                 faasr_prefix=file.path(folder, paste0("stage3/site_id=",lake_name_code)),
-                                                 anonymous = TRUE)
+                                                 faasr_prefix=file.path(folder, paste0("stage3/site_id=",lake_name_code)))
       }else{
         #past_dir <- arrow::s3_bucket(bucket = file.path(bucket, "stage3/parquet",lake_name_code),
         #                             endpoint_override =  endpoint, anonymous = TRUE)
         past_dir <- FaaSr::faasr_arrow_s3_bucket(server_name=server_name, 
-                                                 faasr_prefix=file.path(folder, "stage3/parquet",lake_name_code),
-                                                 anonymous = TRUE)
+                                                 faasr_prefix=file.path(folder, "stage3/parquet",lake_name_code))
       }
       
     }else{
