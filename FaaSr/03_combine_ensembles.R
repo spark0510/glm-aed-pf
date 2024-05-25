@@ -22,7 +22,11 @@ faasr_combine_ensembles <- function(){
   parquet_files <- FaaSr::faasr_get_folder_list(server_name="My_Minio_Bucket", faasr_prefix=ensemble_path)
 
   for(parquet_file in parquet_files){
-    FaaSr::faasr_put_file(server_name="My_Minio_Bucket",
+    dir.create(dirname(as.character(parquet_file)), recursive=TRUE)
+  }
+
+  for(parquet_file in parquet_files){
+    FaaSr::faasr_get_file(server_name="My_Minio_Bucket",
                           remote_file=as.character(parquet_file), 
                           local_file=as.character(parquet_file))
   }
