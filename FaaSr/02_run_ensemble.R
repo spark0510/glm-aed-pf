@@ -25,7 +25,7 @@ faasr_run_ensemble <- function(start, end){
                           local_file=step1_file)
   }
 
-  met_files <- FaaSr::faasr_get_folder_list(server_name="My_Minio_Bucket", faasr_prefix="met")
+  met_files <- FaaSr::faasr_get_folder_list(server_name="My_Minio_Bucket", faasr_prefix="met/")
 
   for(met_file in met_files){
     FaaSr::faasr_get_file(server_name="My_Minio_Bucket",
