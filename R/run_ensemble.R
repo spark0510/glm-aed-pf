@@ -9,6 +9,15 @@ run_ensemble <- function(m, met_inflow_ensembles, config, output_path){
   file.copy("aed2.nml", paste0("aed2-",m,".nml"), overwrite = TRUE)
   file.copy("aed_phyto_pars.csv", paste0("aed_phyto_pars-",m,".csv"), overwrite = TRUE)
   
+  met_files <- FaaSr::faasr_get_folder_list(server_name="My_Minio_Bucket", faasr_prefix="met")
+
+  for(met_file in met_files){
+    FaaSr::faasr_get_file(server_name="My_Minio_Bucket",
+                          remote_folder="met",
+                          remote_file=as.character(met_file), 
+                          local_file=as.character(met_file))
+  }
+
   update_configs(m, init, pars, working_directory, config, met_inflow_ensembles)
   
   GLM3r::run_glm(sim_folder = working_directory, nml_file = paste0("glm3-",m,".nml"), verbose = TRUE)

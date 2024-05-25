@@ -286,6 +286,10 @@ generate_met_files<- function(obs_met_file = NULL,
       fn <- paste0("met_",stringr::str_pad(ens, width = 2, side = "left", pad = "0"),".csv")
       fn <- file.path(out_dir, fn)
       write.csv(df, file = fn, quote = FALSE, row.names = FALSE)
+      FaaSr::faasr_put_file(server_name="My_Minio_Bucket",
+                            remote_folder="met",
+                            remote_file=fn, 
+                            local_file=fn)
       return(fn)
     },
     out_dir = out_dir,
