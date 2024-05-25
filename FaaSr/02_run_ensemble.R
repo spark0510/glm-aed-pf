@@ -25,22 +25,13 @@ faasr_run_ensemble <- function(start, end){
                           local_file=step1_file)
   }
 
-  met_numbers <- c("00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", 
-              "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30")
+  met_files <- FaaSr::faasr_get_folder_list(server_name="My_Minio_Bucket", faasr_prefix="met")
 
-  for(met_number in met_numbers){
+  for(met_file in met_files){
     FaaSr::faasr_get_file(server_name="My_Minio_Bucket",
                           remote_folder="met",
-                          remote_file=paste0("met_",met_number,".csv"), 
-                          local_file=paste0("met_",met_number,".csv"))
-  }
-
-  flows <- c("outflow1.csv", "inflow1.csv")
-  for(flow in flows){
-    FaaSr::faasr_get_file(server_name="My_Minio_Bucket",
-                          remote_folder="met",
-                          remote_file=flow, 
-                          local_file=flow)
+                          remote_file=basename(as.character(met_file)),
+                          local_file=basename(as.character(met_file)))
   }
 
   config <- read_configuration(file = "configuration.yaml")
