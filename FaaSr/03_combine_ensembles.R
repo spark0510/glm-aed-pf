@@ -16,6 +16,16 @@ faasr_combine_ensembles <- function(){
                           local_file=conf_file)
   }
 
+  step1_files <- c("met_inflow_ensembles.RDS", "states_prior.json", "pars_prior.json")
+  
+  for (step1_file in step1_files){
+    FaaSr::faasr_get_file(server_name="My_Minio_Bucket",
+                          remote_file=step1_file, 
+                          local_file=step1_file)
+  }
+  
+  met_inflow_ensembles <- read_rds("met_inflow_ensembles.RDS")
+
   config <- read_configuration(file = "configuration.yaml")
 
   ensemble_path <- "ensemble_output"
