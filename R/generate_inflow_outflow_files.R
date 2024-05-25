@@ -114,8 +114,8 @@ generate_inflow_outflow_files <- function(inflow_forecast_dir = NULL,
                        quote = "none")
       FaaSr::faasr_put_file(server_name="My_Minio_Bucket",
                             remote_folder="met",
-                            remote_file=inflow_file_name, 
-                            local_file=inflow_file_name)
+                            remote_file=basename(inflow_file_name), 
+                            local_file=basename(inflow_file_name))
       inflow_file_names[, j] <- inflow_file_name
     }else{
       
@@ -175,8 +175,8 @@ generate_inflow_outflow_files <- function(inflow_forecast_dir = NULL,
                          quote = "none")
         FaaSr::faasr_put_file(server_name="My_Minio_Bucket",
                             remote_folder="met",
-                            remote_file=inflow_file_name, 
-                            local_file=inflow_file_name)
+                            remote_file=basename(inflow_file_name), 
+                            local_file=basename(inflow_file_name))
       }
     }
   }
@@ -209,10 +209,6 @@ generate_inflow_outflow_files <- function(inflow_forecast_dir = NULL,
       readr::write_csv(x = obs_outflow_tmp,
                        file = outflow_file_name,
                        quote = "none")
-      FaaSr::faasr_put_file(server_name="My_Minio_Bucket",
-                            remote_folder="met",
-                            remote_file=outflow_file_name, 
-                            local_file=outflow_file_name)
       outflow_file_names[, j] <- outflow_file_name
     }else{
       
@@ -262,16 +258,16 @@ generate_inflow_outflow_files <- function(inflow_forecast_dir = NULL,
                            quote = "none")
           FaaSr::faasr_put_file(server_name="My_Minio_Bucket",
                             remote_folder="met",
-                            remote_file=outflow_file_name, 
-                            local_file=outflow_file_name)
+                            remote_file=basename(outflow_file_name), 
+                            local_file=basename(outflow_file_name))
         }else{
           readr::write_csv(x = obs_outflow_tmp,
                            file = outflow_file_name,
                            quote = "none")
           FaaSr::faasr_put_file(server_name="My_Minio_Bucket",
                             remote_folder="met",
-                            remote_file=outflow_file_name, 
-                            local_file=outflow_file_name)
+                            remote_file=basename(outflow_file_name), 
+                            local_file=basename(outflow_file_name))
         }
       }
     }
