@@ -4,6 +4,7 @@ faasr_run_ensemble <- function(start, end){
   setwd(working_directory)
   #purrr::walk(list.files("R", recursive = TRUE, full.names = TRUE), function(file){source(file)})
   library(tidyverse)
+  print(working_directory)
 
   conf_files <- c("aed2_zoop_pars.nml", "aed2.nml", "configuration.yaml", 
                   "fcre-targets-inflow.csv", "glm3_initial.nml", "aed_phyto_pars.csv",
