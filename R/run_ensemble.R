@@ -11,8 +11,9 @@ run_ensemble <- function(m, met_inflow_ensembles, config, output_path){
   
   update_configs(m, init, pars, working_directory, config, met_inflow_ensembles)
   
-  GLM3r::run_glm(sim_folder = working_directory, nml_file = paste0("glm3-",m,".nml"), verbose = FALSE)
+  a <- LM3r::run_glm(sim_folder = working_directory, nml_file = paste0("glm3-",m,".nml"), verbose = FALSE)
   
+  print(a)
   print(working_directory)
   print(list.files("."))
   #var_df <- purrr::map_dfr(focal_depths, function(focal_depth, focal_var, m){
