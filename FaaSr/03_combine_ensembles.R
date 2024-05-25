@@ -84,7 +84,7 @@ faasr_combine_ensembles <- function(){
   weights <- out$weights
 
   pars <- jsonlite::read_json("pars_prior.json")
-  out <- generate_posteriors(prior, pars, weights)
+  out <- generate_posteriors(config, prior, pars, weights)
 
   par_posterior <- out$par_posterior
   posterior <- out$posterior

@@ -1,4 +1,4 @@
-generate_posteriors <- function(prior, pars, weights){
+generate_posteriors <- function(config, prior, pars, weights){
   nsamples <- config$nsamples
   samples <- sample(1:nrow(weights), size = nsamples, replace = TRUE, prob = weights$relative_weight)
   
