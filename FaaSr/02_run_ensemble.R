@@ -31,8 +31,8 @@ faasr_run_ensemble <- function(start, end){
   for(met_number in met_numbers){
     FaaSr::faasr_get_file(server_name="My_Minio_Bucket",
                           remote_folder="met",
-                          remote_file=paste0("met-",met_number,".csv"), 
-                          local_file=paste0("met-",met_number,".csv"))
+                          remote_file=paste0("met_",met_number,".csv"), 
+                          local_file=paste0("met_",met_number,".csv"))
   }
 
   flows <- c("outflow1.csv", "inflow1.csv")
